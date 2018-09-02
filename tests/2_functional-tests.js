@@ -24,7 +24,7 @@ suite('Functional Tests', function() {
           issue_title: 'Title',
           issue_text: 'text',
           created_by: 'Functional',
-          assigned_to: 'Chai',
+          assigned_to: 'Chait',
           status_text: 'In'
         })
         .end(function(err, res){
@@ -32,10 +32,10 @@ suite('Functional Tests', function() {
           assert.equal(res.body.issue_title, 'Title');
           assert.equal(res.body.issue_text, 'text');
           assert.equal(res.body.created_by, 'Functional');
-          assert.equal(res.body.assigned_to, 'Chai');
+          assert.equal(res.body.assigned_to, 'Chait');
           assert.equal(res.body.status_text, 'In');                   
           done();
-        });
+        }); 
       });
       
       test('Required fields filled in', function(done) {
@@ -44,19 +44,29 @@ suite('Functional Tests', function() {
         .send({
           issue_title: 'Title',
           issue_text: 'text',
-          created_by: 'Functional Test'
-        })
+          created_by: 'Functional'
+        }) 
         .end(function(err, res){
           assert.equal(res.status, 200);
           assert.equal(res.body.issue_title, 'Title');
           assert.equal(res.body.issue_text, 'text');
-          assert.equal(res.body.created_by, 'Functional Test');            
-          done();
+          assert.equal(res.body.created_by, 'Functional');            
+          done();  
         });
       });
       
       test('Missing required fields', function(done) {
-        done();
+       chai.request(server)
+        .post('/api/issues/test')
+        .send({
+          issue_text: 'text',
+          created_by: 'Functional'
+        })
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(Object.keys(res.body).length, 0);
+          done();
+        });
       });
       
     });
@@ -64,7 +74,17 @@ suite('Functional Tests', function() {
     suite('PUT /api/issues/{project} => text', function() {
       
       test('No body', function(done) {
-        done();
+        chai.request(server)
+        .put('/api/issues/test')
+        .send({
+          issue_text: 'text',
+          created_by: 'Functional'
+        })
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(Object.keys(res.body).length, 0);
+          done();
+        });
       });
       
       test('One field to update', function(done) {
