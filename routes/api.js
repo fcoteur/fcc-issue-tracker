@@ -28,26 +28,38 @@ router.get('/api/issues/:project', function (req, res){
   
 });
   
-router.post('/api/issues/:project', function (req, res){
-  var project = req.params.project;
-    
-  var issue = new Issue(
-    {
-      project_name: project,
-      issue_title: req.body.issue_title,
-      issue_text: req.body.issue_text,
-      created_by: req.body.created_by
-  });
-  issue.save(function (err) {
-    if (err) { return console.log(err); }
-    res.send(issue);
-  });
-  
+router.post('/api/issues/:project', function x(req, res){
+  var project = req.params.project;  
+
+  if ((req.body.issue_title) && (req.body.issue_text) && (req.body.created_by)) {
+    var issue = new Issue(
+      {
+        project_name: project,
+        issue_title: req.body.issue_title,
+        issue_text: req.body.issue_text,
+        created_by: req.body.created_by
+    });
+    if (req.body.assigned_to) {issue.assigned_to = req.body.assigned_to}
+    if (req.body.status_text) {issue.status_text = req.body.status_text}
+
+    issue.save(function (err) {
+      if (err) {
+        console.log(err.name);
+        if (err.name == 'ValidationError') {
+          console.log(err.name);
+        } else {
+        return console.log(err);
+        }
+      }
+      res.send(issue);
+    });
+  } else {
+    res.end();
+  }
 });
     
 router.put('/api/issues/:project', function (req, res){
   var project = req.params.project;
-  //Returned will be 'successfully updated' or 'could not update '+_id. This should always update updated_on. If no fields are sent return 'no updated field sent'.
   Issue.findById({_id: req.body._id}, (err,doc) => {
     if (err) {
       console.log(err);
