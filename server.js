@@ -11,32 +11,29 @@ var runner            = require('./test-runner');
 
 var app = express();
 
+const helmet = require('helmet');
+app.use(helmet());
+
+var mongoose = require('mongoose');
+var mongoDB = process.env.MONGO_DB;
+mongoose.connect(mongoDB);
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(cors({origin: '*'})); //For FCC testing purposes only
 
-
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-//Sample front-end
-app.route('/:project/')
-  .get(function (req, res) {
-    res.sendFile(process.cwd() + '/views/issue.html');
-  });
-
-//Index page (static HTML)
-app.route('/')
-  .get(function (req, res) {
-    res.sendFile(process.cwd() + '/views/index.html');
-  });
 
 //For FCC testing purposes
 fccTestingRoutes(app);
 
 //Routing for API 
-apiRoutes(app);  
+var apiRoutes = require('./routes/api');
+app.use('/', apiRoutes);
     
 //404 Not Found Middleware
 app.use(function(req, res, next) {
