@@ -60,42 +60,53 @@ router.post('/api/issues/:project', function x(req, res){
     
 router.put('/api/issues/:project', function (req, res){
   var project = req.params.project;
-  Issue.findById({_id: req.body._id}, (err,doc) => {
-    if (err) {
-      console.log(err);
-      res.send('could not find issue '+ doc._id);
-    };
-    
-    if (req.body.lenght == 0) {
-      res.send('no updated field sent');
-    } else {
-      for (let prop in req.body) {
-        try {
-          doc[prop] = req.body[prop];
-          doc.updated_on = Date.now();
-        } catch (err) {
-          console.log(err);
+  
+  if ((req.body) && (req.body._id)) {
+
+    Issue.findById({_id: req.body._id}, (err,doc) => {
+      if (err) {
+        console.log(err);
+        return 'could not find issue '+ doc._id;
+      };
+
+      if (req.body.lenght <= 1) {
+        return 'no updated field sent';
+      } else {
+        for (let prop in req.body) {
+          try {
+            doc[prop] = req.body[prop];
+            doc.updated_on = Date.now();
+          } catch (err) {
+            console.log(err);
+          }
         }
+        doc.save();
+        res.send(doc);
+        return 'successfully updated'; 
       }
-      doc.save();
-      res.send('successfully updated'); 
-    }
-  });
+    });
+  } else {
+    console.log('request is empty or does not have an id');
+    res.end();
+  }
 });
     
 router.delete('/api/issues/:project', function (req, res){
   var project = req.params.project;
   if (!req.body._id) {
-    res.send('_id error');
+    res.end();
+    return '_id error';
   } else {
     Issue.findByIdAndDelete({_id: req.body._id}, (err,doc) => {
     if (err) {
       console.log(err);
-      res.send('could not delete '+ doc._id);
+      res.end();
+      return 'could not delete '+ doc._id;
     };
     doc.open = req.body.open;
     doc.save();
-    res.send('deleted '+ doc._id);
+    res.send(doc);
+    return 'deleted '+ doc._id;
   });
   }
 });
