@@ -23,25 +23,40 @@ suite('Functional Tests', function() {
         .send({
           issue_title: 'Title',
           issue_text: 'text',
-          created_by: 'Functional Test - Every field filled in',
-          assigned_to: 'Chai and Mocha',
-          status_text: 'In QA'
+          created_by: 'Functional',
+          assigned_to: 'Chai',
+          status_text: 'In'
         })
         .end(function(err, res){
           assert.equal(res.status, 200);
-          
-          //fill me in too!
-          
+          assert.equal(res.body.issue_title, 'Title');
+          assert.equal(res.body.issue_text, 'text');
+          assert.equal(res.body.created_by, 'Functional');
+          assert.equal(res.body.assigned_to, 'Chai');
+          assert.equal(res.body.status_text, 'In');                   
           done();
         });
       });
       
       test('Required fields filled in', function(done) {
-        
+       chai.request(server)
+        .post('/api/issues/test')
+        .send({
+          issue_title: 'Title',
+          issue_text: 'text',
+          created_by: 'Functional Test'
+        })
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          assert.equal(res.body.issue_title, 'Title');
+          assert.equal(res.body.issue_text, 'text');
+          assert.equal(res.body.created_by, 'Functional Test');            
+          done();
+        });
       });
       
       test('Missing required fields', function(done) {
-        
+        done();
       });
       
     });
@@ -49,15 +64,15 @@ suite('Functional Tests', function() {
     suite('PUT /api/issues/{project} => text', function() {
       
       test('No body', function(done) {
-        
+        done();
       });
       
       test('One field to update', function(done) {
-        
+        done();
       });
       
       test('Multiple fields to update', function(done) {
-        
+        done();
       });
       
     });
@@ -85,11 +100,11 @@ suite('Functional Tests', function() {
       });
       
       test('One filter', function(done) {
-        
+        done();
       });
       
       test('Multiple filters (test for multiple fields you know will be in the db for a return)', function(done) {
-        
+        done();
       });
       
     });
@@ -97,11 +112,11 @@ suite('Functional Tests', function() {
     suite('DELETE /api/issues/{project} => text', function() {
       
       test('No _id', function(done) {
-        
+        done();
       });
       
       test('Valid _id', function(done) {
-        
+        done();
       });
       
     });
